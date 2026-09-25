@@ -367,8 +367,7 @@ def run_what_if_simulation(machine_id: str, timestamp: Optional[str] = None) -> 
     downtime_avoided = max(0.0, dn_downtime_sum - int_downtime_sum)
 
     current_downtime_risk_str = "Immediate Outage Risk" if risk_level == "HIGH" else ("Elevated Friction / Drift" if risk_level == "MEDIUM" else "Nominal")
-
-    return {
+    sim_result = {
         "machine_id": machine_id,
         "timestamp": actual_timestamp,
         "root_cause": root_cause,
@@ -418,3 +417,16 @@ def run_what_if_simulation(machine_id: str, timestamp: Optional[str] = None) -> 
             "downtime_exposure_avoided": round(downtime_avoided, 1)
         }
     }
+
+    try:
+        from services.llm_service import get_llm_service
+        sim_result["explanation"] = get_llm_service().explain_what_if(sim_result)
+    except Exception:
+        sim_result["explanation"] = (
+            f"Intervening now vs. continuing current operation over the 24-hour horizon yields an estimated avoidance of "
+            f"{prod_avoided:.0f} units in production loss, {energy_avoided:.1f} kWh in wasted energy, and "
+            f"{downtime_avoided:.1f} hours of downtime exposure."
+        )
+
+    return sim_result
+

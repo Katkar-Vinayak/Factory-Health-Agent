@@ -1,0 +1,3 @@
+ticket_id,notification_id,machine_id,component,priority,reason,status,created_at
+TCK-001,NTF-011,M_002,Motor,HIGH,Inspect motor and prepare replacement,CREATED,2026-09-26 02:34:15
+TCK-002,NTF-002,M_010,Motor,HIGH,"Inspect motor ventilation grilles, cooling fan operation, and heat sink cleanliness.; Reduce motor operating duty cycle and load to alleviate thermal saturation.; Verify motor electrical winding insulation resistance and connection terminals.; Schedule preventive motor thermal diagnostic inspection during the next scheduled shift change.",CREATED,2026-09-26 02:45:33

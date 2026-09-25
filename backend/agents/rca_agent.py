@@ -269,86 +269,27 @@ def rca_node(state: AgentState) -> AgentState:
     state["agent_trace"].append("RCA Agent generated candidate root-cause scores")
     state["agent_trace"].append(f"RCA Agent selected {deterministic_result['probable_root_cause']} based on evidence")
     
-    # Default to deterministic result
+    # Authoritative deterministic RCA outputs
     state["root_cause"] = deterministic_result
     state["candidate_scores"] = deterministic_result["candidate_scores"]
     state["evidence"] = list(deterministic_result["evidence"])
     
-    # 3. LLM Refinement Layer
-    # The LLM receives structured RCA evidence produced by the deterministic engine.
-    # LLM must explain why candidate root cause is likely and improve readability.
-    # LLM must NOT override deterministic evidence without explanation.
-    # If LLM fails, deterministic RCA result is used directly.
+    # 3. Qwen RCA Explanation Layer (Interpretation and explanation only; never overrides RCA values)
     try:
-        llm = get_llm()
-        
-        # Build prompt without ground-truth failure_type
-        clean_sensor = {k: v for k, v in sensor.items() if k != "failure_type"}
-        
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are an Industrial Reliability Engineer.
-You have been provided with deterministic root-cause analysis results, telemetry, and evidence scores for an industrial machine.
-Explain why the identified root cause is physically sound, summarize the supporting evidence clearly, and enhance technical readability.
-
-You must NOT change the identified probable_root_cause unless the evidence clearly contradicts it.
-You must return at least 3 concise, highly readable evidence points.
-
-Respond ONLY with a valid JSON object in the following format:
-{{
-    "probable_root_cause": "{root_cause}",
-    "confidence": {confidence},
-    "evidence": ["Evidence point 1", "Evidence point 2", "Evidence point 3"],
-    "explanation": "Brief physical explanation of why this failure occurs."
-}}
-Do not include any extra text, preamble, or markdown backticks outside the JSON object."""),
-            ("user", """Machine ID: {machine_id}
-Candidate Scores: {candidate_scores}
-Identified Root Cause: {root_cause} (Confidence: {confidence})
-Deterministic Evidence Points: {evidence}
-Current Sensors: {sensors}
-Historical Trends: {trends}
-""")
-        ])
-        
-        chain = prompt | llm
-        response = chain.invoke({
-            "machine_id": state["machine_id"],
-            "root_cause": deterministic_result["probable_root_cause"],
-            "confidence": deterministic_result["confidence"],
-            "candidate_scores": json.dumps(deterministic_result["candidate_scores"]),
-            "evidence": json.dumps(deterministic_result["evidence"]),
-            "sensors": json.dumps(clean_sensor),
-            "trends": json.dumps(trends)
-        })
-        
-        content = extract_llm_text(response.content)
-        if content.startswith("```json"):
-            content = content[7:-3].strip()
-        elif content.startswith("```"):
-            content = content[3:-3].strip()
-            
-        parsed_llm = json.loads(content)
-        
-        # Verify valid structure from LLM
-        if isinstance(parsed_llm, dict) and "probable_root_cause" in parsed_llm:
-            llm_cause = parsed_llm.get("probable_root_cause", deterministic_result["probable_root_cause"])
-            # Ensure it is one of the 5 categories
-            if llm_cause in SUPPORTED_FAILURE_TYPES:
-                deterministic_result["probable_root_cause"] = llm_cause
-            if "confidence" in parsed_llm and isinstance(parsed_llm["confidence"], (int, float)):
-                # Keep confidence close to deterministic or bounded
-                deterministic_result["confidence"] = round(float(parsed_llm["confidence"]), 2)
-            if "evidence" in parsed_llm and isinstance(parsed_llm["evidence"], list) and len(parsed_llm["evidence"]) >= 3:
-                deterministic_result["evidence"] = parsed_llm["evidence"]
-            if "explanation" in parsed_llm:
-                deterministic_result["explanation"] = parsed_llm["explanation"]
-                
-            state["root_cause"] = deterministic_result
-            state["evidence"] = deterministic_result["evidence"]
-            
-    except Exception as e:
-        # Graceful fallback: directly keep deterministic RCA result
-        # Do not overwrite with arbitrary values!
-        pass
+        from services.llm_service import get_llm_service
+        llm_svc = get_llm_service()
+        rca_expl = llm_svc.explain_rca(
+            machine_id=state["machine_id"],
+            root_cause=deterministic_result["probable_root_cause"],
+            confidence=deterministic_result["confidence"],
+            candidate_scores=deterministic_result["candidate_scores"],
+            evidence=deterministic_result["evidence"],
+            trends=trends
+        )
+        state["rca_explanation"] = rca_expl.get("explanation")
+        state["root_cause"]["explanation"] = rca_expl.get("explanation")
+    except Exception:
+        state["rca_explanation"] = None
         
     return state
+

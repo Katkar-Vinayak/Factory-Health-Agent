@@ -1,0 +1,6 @@
+vendor_id,vendor_name,part_type,part_number,email,lead_time_days
+V001,Demo Industrial Bearings Ltd,Bearing,BRG-6205,demo-bearings@example.com,3
+V002,Demo ElectroDrive Systems,Motor,MTR-440V-75KW,demo-motors@example.com,5
+V003,Demo Thermal & Cooling Solutions,Cooling Pump,PMP-COOL-220,demo-cooling@example.com,2
+V004,Demo Fluid Power & Hydraulics,Hydraulic Valve & Seal Kit,HYD-VLV-350,demo-hydraulics@example.com,4
+V005,Demo Precision Power Electronics,Inverter & Phase Relay,ELC-RLY-480,demo-electrical@example.com,2

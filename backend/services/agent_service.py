@@ -30,5 +30,13 @@ def run_factory_analysis(machine_id: str, timestamp: str = None) -> dict:
         "impact": result_state.get("impact") or {},
         "recommendations": [result_state.get("recommendation")] if result_state.get("recommendation") else [],
         "agent_trace": result_state.get("agent_trace", []),
-        "final_report": result_state.get("final_report", "")
+        "final_report": result_state.get("final_report", ""),
+        "llm_status": result_state.get("llm_status"),
+        "investigation_explanation": result_state.get("investigation_explanation"),
+        "rca_explanation": result_state.get("rca_explanation"),
+        "decision_explanation": result_state.get("decision_explanation"),
+        "notification_id": result_state.get("notification_id"),
+        "approval_status": result_state.get("approval_status", "NOT_REQUIRED"),
+        "verification_status": result_state.get("verification_status", "NOT_STARTED")
     }
+

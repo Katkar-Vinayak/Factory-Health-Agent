@@ -1,73 +1,66 @@
-from langchain_core.prompts import ChatPromptTemplate
 from agents.state import AgentState
-from agents.llm import get_llm, extract_llm_text
+from services.llm_service import get_llm_service
 
 def report_node(state: AgentState) -> AgentState:
     state["agent_trace"].append("Report Agent generated final report")
     
-    machine_id = state["machine_id"]
-    timestamp = state.get("timestamp") or (state.get("sensor_data") or {}).get("timestamp", "Unknown")
-    risk_level = state.get("risk_level", "UNKNOWN")
-    failure_prob = (state.get("ml_analysis") or {}).get("failure_probability", 0.0)
-    anomaly = (state.get("ml_analysis") or {}).get("anomaly", False)
-    root_cause_info = state.get("root_cause") or {}
-    root_cause = root_cause_info.get("probable_root_cause", "None")
-    confidence = root_cause_info.get("confidence", 0.0)
-    evidence = state.get("evidence", [])
-    impact = state.get("impact") or {}
-    recommendation = state.get("recommendation") or {}
-    
-    prompt = ChatPromptTemplate.from_messages([
-        ("system", """You are an Industrial Reporting Assistant.
-Summarize the machine investigation report concisely and clearly based ONLY on the provided structured data.
-State the machine status, risk level, probable root cause with confidence, key evidence, operational impact, and recommended action.
-Do not invent any measurements or equipment facts. Produce clean, professional markdown text."""),
-        ("user", """
-Machine ID: {machine_id}
-Timestamp: {timestamp}
-Risk Level: {risk_level}
-Failure Probability: {failure_prob}
-Anomaly Detected: {anomaly}
-Probable Root Cause: {root_cause} (Confidence: {confidence})
-Key Evidence: {evidence}
-Operational Impact: {impact}
-Action Plan: {recommendation}
-""")
-    ])
+    llm_svc = get_llm_service()
     
     try:
-        llm = get_llm()
-        chain = prompt | llm
-        
-        response = chain.invoke({
-            "machine_id": machine_id,
-            "timestamp": timestamp,
-            "risk_level": risk_level,
-            "failure_prob": f"{failure_prob:.2f}",
-            "anomaly": anomaly,
-            "root_cause": root_cause,
-            "confidence": f"{confidence:.2f}",
-            "evidence": evidence,
-            "impact": impact,
-            "recommendation": recommendation
-        })
-        
-        state["final_report"] = extract_llm_text(response.content)
-            
+        final_rep = llm_svc.generate_final_report(state)
+        state["final_report"] = final_rep
     except Exception as e:
         # High quality deterministic report fallback
+        machine_id = state.get("machine_id", "Unknown")
+        timestamp = state.get("timestamp") or (state.get("sensor_data") or {}).get("timestamp", "Unknown")
+        risk_level = state.get("risk_level", "UNKNOWN")
+        failure_prob = (state.get("ml_analysis") or {}).get("failure_probability", 0.0)
+        root_cause_info = state.get("root_cause") or {}
+        root_cause = root_cause_info.get("probable_root_cause", "None")
+        confidence = root_cause_info.get("confidence", 0.0)
+        recommendation = state.get("recommendation") or {}
+        
         if risk_level == "LOW":
             state["final_report"] = (
+                f"### Executive Health Summary: Machine {machine_id}\n\n"
                 f"Machine {machine_id} operating under nominal parameters at {timestamp}. "
                 f"Failure probability is {failure_prob:.2f} with no anomalies detected. Routine monitoring continues."
             )
         else:
             action_title = recommendation.get("action", "Schedule Diagnostic Inspection")
             state["final_report"] = (
+                f"### Executive Health Summary: Machine {machine_id}\n\n"
                 f"Machine {machine_id} identified as {risk_level} risk at {timestamp} "
-                f"(Failure Probability: {failure_prob:.2f}). "
-                f"Probable Root Cause: {root_cause} (Confidence: {confidence:.2f}). "
+                f"(Failure Probability: {failure_prob*100:.1f}%). "
+                f"Probable Root Cause: {root_cause} (Confidence: {confidence*100:.0f}%). "
                 f"Recommended Action: {action_title}."
             )
+
+    # Append HITL operational status
+    approval_status = state.get("approval_status", "NOT_REQUIRED")
+    verification_status = state.get("verification_status", "NOT_STARTED")
+    
+    hitl_status_note = ""
+    if approval_status == "PENDING":
+        hitl_status_note = "\n\n**Operational Status**: Maintenance action pending human approval."
+    elif approval_status == "APPROVED":
+        if verification_status == "PENDING_TELEMETRY":
+            hitl_status_note = (
+                "\n\n**Operational Status**: Maintenance action approved and software execution completed. "
+                "Software action verified; physical recovery remains pending new telemetry."
+            )
+        elif verification_status == "VERIFIED":
+            hitl_status_note = "\n\n**Operational Status**: Maintenance action approved and verified. Machine health recovery confirmed."
+        else:
+            hitl_status_note = "\n\n**Operational Status**: Maintenance action approved and software execution completed."
+    elif approval_status == "REJECTED":
+        hitl_status_note = "\n\n**Operational Status**: Maintenance action rejected by human operator."
+
+    if hitl_status_note and hitl_status_note.strip() not in state.get("final_report", ""):
+        state["final_report"] = state.get("final_report", "") + hitl_status_note
+
+    # Attach LLM singleton status
+    state["llm_status"] = llm_svc.get_status()
     
     return state
+

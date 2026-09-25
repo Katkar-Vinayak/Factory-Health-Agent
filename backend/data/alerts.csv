@@ -1,0 +1,2 @@
+alert_id,notification_id,machine_id,component,severity,message,status,created_at
+ALT-001,NTF-002,M_010,Motor,HIGH,"Operator Approved Action Alert: Inspect motor ventilation grilles, cooling fan operation, and heat sink cleanliness.; Reduce motor operating duty cycle and load to alleviate thermal saturation.; Verify motor electrical winding insulation resistance and connection terminals.; Schedule preventive motor thermal diagnostic inspection during the next scheduled shift change.",ACTIVE,2026-09-26 02:45:33

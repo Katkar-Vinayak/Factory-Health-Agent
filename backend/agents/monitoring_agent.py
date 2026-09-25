@@ -46,6 +46,9 @@ def monitoring_node(state: AgentState) -> AgentState:
     if is_anomaly or prob > 0.5:
         state["risk_level"] = "HIGH"
         state["agent_trace"].append(f"High failure risk detected (Probability: {prob:.2f})")
+    elif prob > 0.3:
+        state["risk_level"] = "MEDIUM"
+        state["agent_trace"].append(f"Medium failure risk detected (Probability: {prob:.2f})")
     else:
         state["risk_level"] = "LOW"
         state["agent_trace"].append(f"Normal operation detected (Probability: {prob:.2f})")

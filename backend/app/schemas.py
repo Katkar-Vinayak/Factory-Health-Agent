@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
 
 class MachineSensorInput(BaseModel):
@@ -83,4 +83,96 @@ class WhatIfSimulationRequest(BaseModel):
         if not v or not v.strip():
             raise ValueError("machine_id is required and cannot be empty")
         return v.strip()
+
+
+# =====================================================================
+# PHASE 4: Human-in-the-Loop Notification & Action Schemas
+# =====================================================================
+
+class NotificationItem(BaseModel):
+    notification_id: str
+    machine_id: str
+    timestamp: Optional[str] = None
+    severity: str
+    title: str
+    message: str
+    component: str
+    root_cause: str
+    failure_probability: float
+    recommendation: Any
+    status: str
+    created_at: str
+    resolved_at: Optional[str] = None
+    rejection_reason: Optional[str] = None
+
+class NotificationListResponse(BaseModel):
+    notifications: List[NotificationItem]
+    count: int
+
+class AcceptNotificationRequest(BaseModel):
+    explicit_approval: bool = Field(..., description="Must be true for human approval")
+    approved_by: str = Field(..., description="Operator/engineer audit identifier")
+    approved_actions: List[str] = Field(..., description="List of approved software action types")
+    notes: Optional[str] = Field(None, description="Optional operator notes")
+
+    @field_validator('approved_by')
+    @classmethod
+    def validate_approved_by(cls, v: str) -> str:
+        stripped = v.strip() if v else ""
+        if not stripped:
+            raise ValueError("approved_by is required and cannot be empty")
+        return stripped
+
+    @field_validator('approved_actions')
+    @classmethod
+    def validate_approved_actions(cls, v: List[str]) -> List[str]:
+        if not v:
+            raise ValueError("approved_actions list cannot be empty")
+        return [str(a).strip() for a in v if str(a).strip()]
+
+class AcceptNotificationResponse(BaseModel):
+    notification_id: str
+    status: str
+    approved_by: str
+    approved_at: str
+    actions: List[Dict[str, Any]]
+    message: str
+
+class RejectNotificationRequest(BaseModel):
+    rejected_by: str = Field(..., description="Operator audit identifier")
+    rejection_reason: Optional[str] = Field(None, description="Optional rejection reason")
+
+    @field_validator('rejected_by')
+    @classmethod
+    def validate_rejected_by(cls, v: str) -> str:
+        stripped = v.strip() if v else ""
+        if not stripped:
+            raise ValueError("rejected_by is required and cannot be empty")
+        return stripped
+
+class RejectNotificationResponse(BaseModel):
+    notification_id: str
+    status: str
+    rejected_by: str
+    rejected_at: str
+    rejection_reason: Optional[str] = None
+    message: str
+
+class ActionRecordItem(BaseModel):
+    action_id: str
+    notification_id: str
+    machine_id: str
+    action_type: str
+    component: str
+    priority: str
+    reason: str
+    status: str
+    approved_at: str
+    completed_at: str
+    result: str
+    verification_status: str
+
+class ActionHistoryResponse(BaseModel):
+    actions: List[Dict[str, Any]]
+    count: int
 

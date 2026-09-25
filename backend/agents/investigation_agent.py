@@ -61,4 +61,21 @@ def investigation_node(state: AgentState) -> AgentState:
         state["energy_history"] = energy_hist
         state["agent_trace"].append("Investigation Agent retrieved energy history")
         
+    # 5. Qwen Investigation Explanation Layer
+    try:
+        from services.llm_service import get_llm_service
+        llm_svc = get_llm_service()
+        state["investigation_explanation"] = llm_svc.explain_investigation(
+            machine_id=machine_id,
+            risk_level=state.get("risk_level", "UNKNOWN"),
+            failure_probability=(state.get("ml_analysis") or {}).get("failure_probability", 0.0),
+            anomaly=(state.get("ml_analysis") or {}).get("anomaly", False),
+            abnormal_signals=abnormal_signals,
+            trends=trends,
+            evidence=state.get("evidence", [])
+        )
+    except Exception:
+        state["investigation_explanation"] = None
+
     return state
+

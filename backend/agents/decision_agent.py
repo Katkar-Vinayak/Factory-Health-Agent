@@ -144,68 +144,21 @@ def decision_node(state: AgentState) -> AgentState:
     state["agent_trace"].append("Decision Agent generated maintenance and energy actions")
     state["recommendation"] = deterministic_decision
     
-    # 3. LLM Refinement Layer
-    # Enhances readability and practical phrasing while maintaining strict safety boundaries
+    # 3. Qwen Decision Explanation Layer
+    # Explains operational reasoning behind the deterministic recommendation, urgency, and expected benefit
     try:
-        llm = get_llm()
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are an Industrial Operations and Maintenance Decision Agent.
-You are given a deterministic action plan for an industrial machine.
-Your job is to refine and synthesize this plan into a concise, professional, and practical recommendation.
-
-IMPORTANT SAFETY RULES:
-- The system is a decision-support and recommendation tool ONLY.
-- It must NEVER claim to autonomously control or shut down physical industrial equipment.
-- All recommendations must be phrased using advisory terms: inspect, schedule, reduce load, monitor, shift production.
-
-Respond ONLY with a valid JSON object in the following format:
-{{
-    "action": "{action}",
-    "priority": "{priority}",
-    "recommended_actions": ["Action 1", "Action 2", "Action 3"],
-    "details": "Clear, professional engineering rationale.",
-    "estimated_cost_impact": "{cost_impact}"
-}}
-Do not include any extra text, preamble, or markdown backticks outside the JSON object."""),
-            ("user", """Machine ID: {machine_id}
-Failure Probability: {failure_prob}
-Root Cause: {root_cause} (Confidence: {confidence})
-Deterministic Action: {action}
-Deterministic Priority: {priority}
-Recommended Actions: {recommended_actions}
-Impact Context: {impact}
-""")
-        ])
-        
-        chain = prompt | llm
-        response = chain.invoke({
-            "machine_id": state["machine_id"],
-            "failure_prob": failure_prob,
-            "root_cause": probable_root_cause,
-            "confidence": confidence,
-            "action": deterministic_decision["action"],
-            "priority": deterministic_decision["priority"],
-            "recommended_actions": json.dumps(deterministic_decision["recommended_actions"]),
-            "cost_impact": deterministic_decision["estimated_cost_impact"],
-            "impact": json.dumps(impact_data)
-        })
-        
-        content = extract_llm_text(response.content)
-        if content.startswith("```json"):
-            content = content[7:-3].strip()
-        elif content.startswith("```"):
-            content = content[3:-3].strip()
-            
-        parsed_decision = json.loads(content)
-        if isinstance(parsed_decision, dict) and "action" in parsed_decision:
-            if "recommended_actions" not in parsed_decision or not parsed_decision["recommended_actions"]:
-                parsed_decision["recommended_actions"] = deterministic_decision["recommended_actions"]
-            if "estimated_cost_impact" not in parsed_decision:
-                parsed_decision["estimated_cost_impact"] = deterministic_decision["estimated_cost_impact"]
-            state["recommendation"] = parsed_decision
-            
-    except Exception as e:
-        # Graceful fallback: maintain deterministic recommendation
-        pass
+        from services.llm_service import get_llm_service
+        llm_svc = get_llm_service()
+        decision_expl = llm_svc.explain_decision(
+            machine_id=state["machine_id"],
+            root_cause=probable_root_cause,
+            recommendation=deterministic_decision,
+            impact=impact_data
+        )
+        state["decision_explanation"] = decision_expl
+        state["recommendation"]["explanation"] = decision_expl
+    except Exception:
+        state["decision_explanation"] = None
         
     return state
+

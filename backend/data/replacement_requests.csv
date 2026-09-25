@@ -1,0 +1,5 @@
+request_id,notification_id,machine_id,part_name,part_number,vendor_id,vendor_email,quantity,priority,status,created_at,sent_at
+REQ-001,NTF-011,M_002,Motor,MTR-440V-75KW,V002,demo-motors@example.com,1,HIGH,DRAFTED,2026-09-26 02:34:15,
+REQ-002,NTF-009,M_003,Bearing,BRG-6205,V001,demo-bearings@example.com,1,HIGH,DRAFTED,2026-09-26 02:34:18,
+REQ-003,NTF-002,M_010,Motor,MTR-440V-75KW,V002,demo-motors@example.com,1,HIGH,DRAFTED,2026-09-26 02:45:33,
+REQ-004,NTF-002,M_010,Motor,MTR-440V-75KW,V002,demo-motors@example.com,1,HIGH,SIMULATED,2026-09-26 02:45:33,2026-09-26 02:45:33
