@@ -1,0 +1,25 @@
+machine_id,machine_name,machine_type,machine_age_years,rated_power_kw,installation_date,operating_hours,maintenance_count,criticality_level
+M_001,Welding Robot 1,Welding Robot,14.3,100.0,2011-09-04,12284,43,Medium
+M_002,Industrial Press 2,Industrial Press,2.4,100.0,2012-07-28,12363,44,High
+M_003,Packaging Line 3,Packaging Line,14.6,150.0,2015-05-05,6311,25,Low
+M_004,Welding Robot 4,Welding Robot,9.6,200.0,2014-01-19,9666,46,High
+M_005,Industrial Press 5,Industrial Press,6.4,150.0,2017-10-26,12394,41,High
+M_006,Packaging Line 6,Packaging Line,7.3,75.0,2015-05-03,9792,18,Medium
+M_007,Milling Machine 7,Milling Machine,5.3,200.0,2018-04-09,16787,12,High
+M_008,Industrial Press 8,Industrial Press,13.7,150.0,2017-08-30,4943,8,Medium
+M_009,Milling Machine 9,Milling Machine,8.9,200.0,2021-07-24,5297,40,Medium
+M_010,Welding Robot 10,Welding Robot,1.6,200.0,2021-01-29,18262,28,Medium
+M_011,Packaging Line 11,Packaging Line,2.5,150.0,2021-03-15,8500,15,High
+M_012,CNC Lathe,CNC Lathe,3.0,100.0,2020-05-12,9200,20,Medium
+M_013,CNC Lathe ,CNC Lathe,4.0,100.0,2021-06-15,7200,15,High
+M_014,Welding Robot,Welding Robot,1.6,200.0,2021-01-29,18262,28,Medium
+M_015,CNC Lathe ,CNC Lathe,4.0,100.0,2021-06-15,7200,15,High
+M_016,CNC Lathe ,CNC Lathe,4.0,100.0,2021-06-15,7200,15,Medium
+M_017,CNC Lathe ,CNC Lathe,4.0,100.0,2021-06-15,7200,15,Low
+M_018,Packaging Line,Packaging Line,14.6,150.0,2015-05-05,6311,25,Medium
+M_019,CNC Lathe ,CNC Lathe,4.0,100.0,2021-06-15,7200,15,High
+M_020,Industrial Press,Industrial Press,13.7,150.0,2017-08-30,4943,8,Medium
+M_021,CNC Lathe 21,CNC Lathe,3.0,60.0,2024-06-15,4000,2,High
+M_022,Milling Machine 22,Milling Machine,2.0,75.0,2024-02-01,3500,1,Medium
+M_023,Milling Machine 23,Milling Machine,2.0,75.0,2024-02-01,3500,1,Medium
+M_024,CNC,CNC Lathe,7.0,100.0,2026-09-25,5000,5,Medium
