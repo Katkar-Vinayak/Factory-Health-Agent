@@ -72,3 +72,15 @@ class AddMachineResponse(BaseModel):
     synchronization: Dict[str, Any]
     training: Dict[str, Any]
     message: str
+
+class WhatIfSimulationRequest(BaseModel):
+    machine_id: str = Field(..., description="Target machine identifier (e.g. M_003)")
+    timestamp: Optional[str] = Field(None, description="Optional target observation timestamp (e.g. 2023-01-19 22:00:00)")
+
+    @field_validator('machine_id')
+    @classmethod
+    def validate_machine_id(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("machine_id is required and cannot be empty")
+        return v.strip()
+

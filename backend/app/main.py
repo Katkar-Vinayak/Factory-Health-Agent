@@ -32,11 +32,12 @@ import os
 # Ensure the backend directory is in the path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.routes import health, machines, agent
+from app.routes import health, machines, agent, simulation
 
 app.include_router(health.router, prefix="/api")
 app.include_router(machines.router, prefix="/api")
 app.include_router(agent.router, prefix="/api")
+app.include_router(simulation.router, prefix="/api")
 
 if __name__ == "__main__":
     import uvicorn
