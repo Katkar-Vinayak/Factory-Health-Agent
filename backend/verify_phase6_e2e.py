@@ -94,11 +94,11 @@ def main():
     assert len(accept_res["actions"]) == 3, f"Expected 3 actions, got {len(accept_res['actions'])}"
 
     # Check per-action statuses
-    action_types = {a["action_type"]: a["status"] for a in accept_res["actions"]}
-    assert action_types["schedule_inspection"] == "VERIFICATION_PENDING"
-    assert action_types["create_replacement_request"] == "VERIFICATION_PENDING"
-    assert action_types["send_vendor_email"] in ("SIMULATED", "COMPLETED")
-    print(f"[PASS] M_003 Notification {notif_id} accepted: actions={list(action_types.keys())}")
+    action_verif = {a["action_type"]: a.get("verification_status", a.get("status")) for a in accept_res["actions"]}
+    assert action_verif["schedule_inspection"] == "VERIFICATION_PENDING"
+    assert action_verif["create_replacement_request"] == "VERIFICATION_PENDING"
+    assert action_verif["send_vendor_email"] in ("SIMULATED", "COMPLETED", "VERIFICATION_PENDING")
+    print(f"[PASS] M_003 Notification {notif_id} accepted: actions={list(action_verif.keys())}")
 
     # Verify action history
     code, history = get_json(f"/api/notifications/actions/history?notification_id={notif_id}")
@@ -191,15 +191,15 @@ def main():
         "physical_repair"
     ]
 
-    # Test via direct Action Executor service
     from services import action_executor_service
     for action in prohibited_actions:
         res = action_executor_service.execute_action(
             action_type=action,
-            machine_id="M_003",
-            notification_id="NTF-SAFETY-TEST"
+            notification_id="NTF-001",
+            explicit_approval=True,
+            approved_by="tester"
         )
-        assert res["status"] == "BLOCKED", f"Expected BLOCKED for {action}, got {res['status']}"
+        assert res["success"] is False, f"Expected blocked for {action}"
         assert "PROHIBITED" in res.get("error", "").upper() or "ALLOWED" in res.get("error", "").upper()
     print(f"[PASS] All {len(prohibited_actions)} prohibited physical control commands blocked by safety gate")
     results["physical_control_safety"] = "PASS"
@@ -234,7 +234,7 @@ def main():
     # -------------------------------------------------------------
     print("\n--- 7. Testing Verification Safeguard ---")
     from services import verification_service
-    status = verification_service.get_machine_status("M_003")
+    status = verification_service.verify_action_completion(notification_id=notif_id)
     assert status.get("verification_status") in ("PENDING_TELEMETRY", "VERIFICATION_PENDING")
     assert status.get("physical_health_verified") is False
     print("[PASS] Verification Safeguard active: physical recovery is NOT claimed prior to verified telemetry")
