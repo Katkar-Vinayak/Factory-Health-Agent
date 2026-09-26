@@ -20,12 +20,20 @@ app = FastAPI(
 ensure_users_csv_exists()
 
 # Configure CORS
-origins = [
+default_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3001",
 ]
+
+cors_env = os.environ.get("CORS_ORIGINS", "").strip()
+if cors_env:
+    origins = [origin.strip() for origin in cors_env.split(",") if origin.strip()]
+    if not origins:
+        origins = default_origins
+else:
+    origins = default_origins
 
 app.add_middleware(
     CORSMiddleware,
