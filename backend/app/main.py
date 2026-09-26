@@ -1,5 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
+import sys
+import os
+
+# Ensure the backend directory is in the path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from services.auth_service import get_current_user, ensure_users_csv_exists
+from app.routes import health, machines, agent, simulation, notifications, auth
 
 # Initialize FastAPI
 app = FastAPI(
@@ -7,6 +15,9 @@ app = FastAPI(
     description="ML backend for predicting machine failures and anomalies.",
     version="1.0.0"
 )
+
+# Initialize user catalog and demo operator account
+ensure_users_csv_exists()
 
 # Configure CORS
 origins = [
@@ -24,21 +35,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include Routers
-# Need to import them after app creation to avoid circular issues, or standard way is importing directly
-import sys
-import os
-
-# Ensure the backend directory is in the path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from app.routes import health, machines, agent, simulation, notifications
-
+# Public endpoints
 app.include_router(health.router, prefix="/api")
-app.include_router(machines.router, prefix="/api")
-app.include_router(agent.router, prefix="/api")
-app.include_router(simulation.router, prefix="/api")
-app.include_router(notifications.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
+
+# Protected application endpoints (require valid authenticated operator session)
+app.include_router(machines.router, prefix="/api", dependencies=[Depends(get_current_user)])
+app.include_router(agent.router, prefix="/api", dependencies=[Depends(get_current_user)])
+app.include_router(simulation.router, prefix="/api", dependencies=[Depends(get_current_user)])
+app.include_router(notifications.router, prefix="/api", dependencies=[Depends(get_current_user)])
 
 if __name__ == "__main__":
     import uvicorn

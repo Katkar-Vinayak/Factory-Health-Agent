@@ -6,6 +6,7 @@ from services import ml_service
 
 router = APIRouter(prefix="/machines", tags=["Machines"])
 
+@router.get("", response_model=List[Dict[str, Any]])
 @router.get("/", response_model=List[Dict[str, Any]])
 def get_all_machines():
     return machine_service.get_all_machines()

@@ -20,6 +20,14 @@ def run_simulation_tests():
     print("RUNNING WHAT-IF 24-HOUR IMPACT SIMULATOR TEST SUITE")
     print("=" * 60)
 
+    # Initialize authenticated session
+    session = requests.Session()
+    login_resp = session.post(f"{BASE_URL}/auth/login", json={
+        "email": "operator@factory.com",
+        "password": "Factory@123!"
+    })
+    assert login_resp.status_code == 200, f"Auth failed: {login_resp.text}"
+
     # -------------------------------------------------------------
     # TEST 1: M_003 Demonstration Preset
     # -------------------------------------------------------------
@@ -28,7 +36,7 @@ def run_simulation_tests():
         "machine_id": "M_003",
         "timestamp": "2023-01-19 22:00:00"
     }
-    resp = requests.post(f"{BASE_URL}/simulation/what-if", json=payload_m003)
+    resp = session.post(f"{BASE_URL}/simulation/what-if", json=payload_m003)
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
     data_003 = resp.json()
 
@@ -69,7 +77,7 @@ def run_simulation_tests():
     # -------------------------------------------------------------
     print("\n--- TEST 2: Machine M_010 (Latest Critical Scenario) ---")
     payload_m010 = {"machine_id": "M_010"}
-    resp = requests.post(f"{BASE_URL}/simulation/what-if", json=payload_m010)
+    resp = session.post(f"{BASE_URL}/simulation/what-if", json=payload_m010)
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
     data_010 = resp.json()
 
@@ -91,7 +99,7 @@ def run_simulation_tests():
     # -------------------------------------------------------------
     print("\n--- TEST 3: Machine M_005 (Warning Scenario / MEDIUM Risk) ---")
     payload_m005 = {"machine_id": "M_005"}
-    resp = requests.post(f"{BASE_URL}/simulation/what-if", json=payload_m005)
+    resp = session.post(f"{BASE_URL}/simulation/what-if", json=payload_m005)
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
     data_005 = resp.json()
 
@@ -110,7 +118,7 @@ def run_simulation_tests():
     # -------------------------------------------------------------
     print("\n--- TEST 4: Machine M_001 (Healthy Machine / LOW Risk) ---")
     payload_m001 = {"machine_id": "M_001"}
-    resp = requests.post(f"{BASE_URL}/simulation/what-if", json=payload_m001)
+    resp = session.post(f"{BASE_URL}/simulation/what-if", json=payload_m001)
     assert resp.status_code == 200, f"Expected 200, got {resp.status_code}: {resp.text}"
     data_001 = resp.json()
 
@@ -125,7 +133,7 @@ def run_simulation_tests():
     # TEST 5: HTTP 404 for Unknown Machine
     # -------------------------------------------------------------
     print("\n--- TEST 5: Invalid Machine ID (HTTP 404) ---")
-    resp_404 = requests.post(f"{BASE_URL}/simulation/what-if", json={"machine_id": "M_999"})
+    resp_404 = session.post(f"{BASE_URL}/simulation/what-if", json={"machine_id": "M_999"})
     print(f"Status Code: {resp_404.status_code}, Detail: {resp_404.text}")
     assert resp_404.status_code == 404, f"Expected 404, got {resp_404.status_code}"
     print(">> TEST 5 PASSED!")
@@ -134,7 +142,7 @@ def run_simulation_tests():
     # TEST 6: HTTP 422 for Malformed Input
     # -------------------------------------------------------------
     print("\n--- TEST 6: Missing machine_id (HTTP 422) ---")
-    resp_422 = requests.post(f"{BASE_URL}/simulation/what-if", json={})
+    resp_422 = session.post(f"{BASE_URL}/simulation/what-if", json={})
     print(f"Status Code: {resp_422.status_code}, Detail: {resp_422.text}")
     assert resp_422.status_code == 422, f"Expected 422, got {resp_422.status_code}"
     print(">> TEST 6 PASSED!")

@@ -21,56 +21,51 @@ MAINT_0019,M_009,2023-02-09 03:00:00,Corrective,Motor,Fix Motor Overheating,36,9
 MAINT_0020,M_010,2023-01-05 21:00:00,Corrective,Bearing,Fix Bearing Degradation,38,3734.51,Replaced Bearing after failure.
 MAINT_0021,M_010,2023-01-22 01:00:00,Corrective,Hydraulic Pump,Fix Hydraulic Pressure Failure,32,2593.28,Replaced Hydraulic Pump after failure.
 MAINT_0022,M_010,2023-01-31 20:00:00,Corrective,Bearing,Fix Bearing Degradation,11,591.18,Replaced Bearing after failure.
-MAINT_0023,M_001,2023-01-23 00:00:00,Preventive,Filter,Routine check,1,138.3,All systems normal.
-MAINT_0024,M_001,2023-02-04 00:00:00,Preventive,Filter,Routine check,1,130.32,All systems normal.
-MAINT_0025,M_001,2023-01-19 00:00:00,Preventive,Lubrication,Routine check,2,401.3,All systems normal.
-MAINT_0026,M_002,2023-01-29 00:00:00,Preventive,Lubrication,Routine check,1,416.35,All systems normal.
-MAINT_0027,M_002,2023-01-29 00:00:00,Preventive,Sensor Calibration,Routine check,2,100.74,All systems normal.
-MAINT_0028,M_002,2023-01-13 00:00:00,Preventive,Sensor Calibration,Routine check,1,499.61,All systems normal.
-MAINT_0029,M_003,2023-01-19 00:00:00,Preventive,Filter,Routine check,3,248.87,All systems normal.
-MAINT_0030,M_003,2023-02-03 00:00:00,Preventive,Lubrication,Routine check,3,202.42,All systems normal.
-MAINT_0031,M_004,2023-01-13 00:00:00,Preventive,Sensor Calibration,Routine check,3,420.19,All systems normal.
-MAINT_0032,M_004,2023-01-17 00:00:00,Preventive,Sensor Calibration,Routine check,3,230.57,All systems normal.
-MAINT_0033,M_005,2023-01-30 00:00:00,Preventive,Lubrication,Routine check,2,207.08,All systems normal.
-MAINT_0034,M_006,2023-01-29 00:00:00,Preventive,Sensor Calibration,Routine check,1,244.41,All systems normal.
-MAINT_0035,M_006,2023-01-17 00:00:00,Preventive,Lubrication,Routine check,1,436.68,All systems normal.
-MAINT_0036,M_007,2023-01-13 00:00:00,Preventive,Sensor Calibration,Routine check,3,347.21,All systems normal.
-MAINT_0037,M_008,2023-01-16 00:00:00,Preventive,Lubrication,Routine check,3,404.19,All systems normal.
-MAINT_0038,M_008,2023-01-08 00:00:00,Preventive,Sensor Calibration,Routine check,3,253.7,All systems normal.
-MAINT_0039,M_009,2023-01-08 00:00:00,Preventive,Sensor Calibration,Routine check,3,107.07,All systems normal.
-MAINT_0040,M_009,2023-01-19 00:00:00,Preventive,Sensor Calibration,Routine check,3,132.72,All systems normal.
-MAINT_0041,M_009,2023-01-29 00:00:00,Preventive,Filter,Routine check,2,223.7,All systems normal.
-MAINT_0042,M_010,2023-01-11 00:00:00,Preventive,Lubrication,Routine check,3,164.27,All systems normal.
-MAINT_0043,M_010,2023-01-31 00:00:00,Preventive,Lubrication,Routine check,2,388.42,All systems normal.
-MAINT_0044,M_011,2023-01-30 00:00:00,Preventive,Lubrication,Routine check,3,416.94,All systems normal.
-MAINT_0045,M_011,2023-01-08 00:00:00,Preventive,Filter,Routine check,2,462.31,All systems normal.
-MAINT_0046,M_012,2023-01-25 00:00:00,Preventive,Sensor Calibration,Routine check,3,108.74,All systems normal.
-MAINT_0047,M_012,2023-01-09 00:00:00,Preventive,Filter,Routine check,2,245.38,All systems normal.
-MAINT_0048,M_012,2023-01-07 00:00:00,Preventive,Lubrication,Routine check,2,200.05,All systems normal.
-MAINT_0049,M_013,2023-01-11 00:00:00,Preventive,Lubrication,Routine check,3,411.02,All systems normal.
-MAINT_0050,M_013,2023-01-12 00:00:00,Preventive,Filter,Routine check,1,432.26,All systems normal.
-MAINT_0051,M_013,2023-01-06 00:00:00,Preventive,Filter,Routine check,1,125.25,All systems normal.
-MAINT_0052,M_014,2023-01-26 00:00:00,Preventive,Lubrication,Routine check,2,280.49,All systems normal.
-MAINT_0053,M_014,2023-01-21 00:00:00,Preventive,Filter,Routine check,1,174.6,All systems normal.
-MAINT_0054,M_014,2023-02-06 00:00:00,Preventive,Sensor Calibration,Routine check,3,280.27,All systems normal.
-MAINT_0055,M_015,2023-01-30 00:00:00,Preventive,Sensor Calibration,Routine check,1,147.35,All systems normal.
-MAINT_0056,M_015,2023-01-27 00:00:00,Preventive,Lubrication,Routine check,2,168.0,All systems normal.
-MAINT_0057,M_015,2023-01-14 00:00:00,Preventive,Filter,Routine check,2,425.69,All systems normal.
-MAINT_0058,M_016,2023-01-11 00:00:00,Preventive,Filter,Routine check,2,411.12,All systems normal.
-MAINT_0059,M_017,2023-02-03 00:00:00,Preventive,Sensor Calibration,Routine check,2,263.99,All systems normal.
-MAINT_0060,M_017,2023-01-18 00:00:00,Preventive,Filter,Routine check,3,205.88,All systems normal.
-MAINT_0061,M_018,2023-02-01 00:00:00,Preventive,Sensor Calibration,Routine check,1,402.22,All systems normal.
-MAINT_0062,M_019,2023-01-26 00:00:00,Preventive,Filter,Routine check,2,167.88,All systems normal.
-MAINT_0063,M_019,2023-01-15 00:00:00,Preventive,Filter,Routine check,2,376.58,All systems normal.
-MAINT_0064,M_020,2023-01-14 00:00:00,Preventive,Lubrication,Routine check,3,105.54,All systems normal.
-MAINT_0065,M_020,2023-01-29 00:00:00,Preventive,Sensor Calibration,Routine check,3,153.74,All systems normal.
-MAINT_0066,M_020,2023-01-26 00:00:00,Preventive,Filter,Routine check,3,212.9,All systems normal.
-MAINT_0067,M_021,2023-01-10 00:00:00,Preventive,Filter,Routine check,1,352.72,All systems normal.
-MAINT_0068,M_021,2023-01-09 00:00:00,Preventive,Lubrication,Routine check,2,119.53,All systems normal.
-MAINT_0069,M_021,2023-01-19 00:00:00,Preventive,Lubrication,Routine check,2,315.48,All systems normal.
-MAINT_0070,M_022,2023-02-01 00:00:00,Preventive,Lubrication,Routine check,1,484.71,All systems normal.
-MAINT_0071,M_023,2023-01-19 00:00:00,Preventive,Lubrication,Routine check,1,456.76,All systems normal.
-MAINT_0072,M_023,2023-01-21 00:00:00,Preventive,Filter,Routine check,2,154.08,All systems normal.
-MAINT_0073,M_023,2023-01-30 00:00:00,Preventive,Filter,Routine check,2,250.71,All systems normal.
-MAINT_0074,M_024,2023-02-05 00:00:00,Preventive,Lubrication,Routine check,1,198.24,All systems normal.
-MAINT_0075,M_024,2023-01-27 00:00:00,Preventive,Lubrication,Routine check,1,317.65,All systems normal.
+MAINT_0023,M_001,2023-01-14 00:00:00,Preventive,Filter,Routine check,3,295.84,All systems normal.
+MAINT_0024,M_001,2023-02-04 00:00:00,Preventive,Filter,Routine check,2,259.95,All systems normal.
+MAINT_0025,M_002,2023-02-05 00:00:00,Preventive,Lubrication,Routine check,1,324.37,All systems normal.
+MAINT_0026,M_002,2023-01-22 00:00:00,Preventive,Sensor Calibration,Routine check,1,427.15,All systems normal.
+MAINT_0027,M_002,2023-01-18 00:00:00,Preventive,Filter,Routine check,3,211.7,All systems normal.
+MAINT_0028,M_003,2023-01-08 00:00:00,Preventive,Filter,Routine check,1,317.69,All systems normal.
+MAINT_0029,M_003,2023-01-22 00:00:00,Preventive,Filter,Routine check,3,471.76,All systems normal.
+MAINT_0030,M_003,2023-02-04 00:00:00,Preventive,Sensor Calibration,Routine check,1,273.62,All systems normal.
+MAINT_0031,M_004,2023-01-15 00:00:00,Preventive,Lubrication,Routine check,3,256.57,All systems normal.
+MAINT_0032,M_005,2023-01-16 00:00:00,Preventive,Filter,Routine check,2,469.25,All systems normal.
+MAINT_0033,M_006,2023-01-28 00:00:00,Preventive,Filter,Routine check,1,282.63,All systems normal.
+MAINT_0034,M_006,2023-02-04 00:00:00,Preventive,Sensor Calibration,Routine check,3,215.48,All systems normal.
+MAINT_0035,M_007,2023-01-22 00:00:00,Preventive,Sensor Calibration,Routine check,1,392.65,All systems normal.
+MAINT_0036,M_007,2023-01-18 00:00:00,Preventive,Filter,Routine check,3,386.63,All systems normal.
+MAINT_0037,M_007,2023-01-21 00:00:00,Preventive,Sensor Calibration,Routine check,3,494.35,All systems normal.
+MAINT_0038,M_008,2023-02-09 00:00:00,Preventive,Filter,Routine check,2,311.31,All systems normal.
+MAINT_0039,M_009,2023-01-07 00:00:00,Preventive,Lubrication,Routine check,2,385.32,All systems normal.
+MAINT_0040,M_009,2023-01-14 00:00:00,Preventive,Sensor Calibration,Routine check,1,222.75,All systems normal.
+MAINT_0041,M_009,2023-01-30 00:00:00,Preventive,Lubrication,Routine check,3,193.41,All systems normal.
+MAINT_0042,M_010,2023-01-09 00:00:00,Preventive,Lubrication,Routine check,3,272.0,All systems normal.
+MAINT_0043,M_011,2023-01-13 00:00:00,Preventive,Filter,Routine check,2,409.58,All systems normal.
+MAINT_0044,M_011,2023-01-13 00:00:00,Preventive,Lubrication,Routine check,2,215.26,All systems normal.
+MAINT_0045,M_011,2023-02-06 00:00:00,Preventive,Lubrication,Routine check,2,136.58,All systems normal.
+MAINT_0046,M_012,2023-01-17 00:00:00,Preventive,Filter,Routine check,3,383.29,All systems normal.
+MAINT_0047,M_013,2023-01-24 00:00:00,Preventive,Lubrication,Routine check,3,266.39,All systems normal.
+MAINT_0048,M_014,2023-01-14 00:00:00,Preventive,Sensor Calibration,Routine check,1,356.25,All systems normal.
+MAINT_0049,M_014,2023-01-29 00:00:00,Preventive,Lubrication,Routine check,3,474.75,All systems normal.
+MAINT_0050,M_015,2023-01-14 00:00:00,Preventive,Sensor Calibration,Routine check,2,280.29,All systems normal.
+MAINT_0051,M_016,2023-01-13 00:00:00,Preventive,Filter,Routine check,1,226.15,All systems normal.
+MAINT_0052,M_017,2023-01-06 00:00:00,Preventive,Sensor Calibration,Routine check,1,299.13,All systems normal.
+MAINT_0053,M_017,2023-01-26 00:00:00,Preventive,Filter,Routine check,2,120.68,All systems normal.
+MAINT_0054,M_017,2023-01-26 00:00:00,Preventive,Lubrication,Routine check,3,362.52,All systems normal.
+MAINT_0055,M_018,2023-01-17 00:00:00,Preventive,Sensor Calibration,Routine check,1,406.95,All systems normal.
+MAINT_0056,M_019,2023-01-20 00:00:00,Preventive,Lubrication,Routine check,2,337.34,All systems normal.
+MAINT_0057,M_019,2023-02-02 00:00:00,Preventive,Filter,Routine check,1,146.93,All systems normal.
+MAINT_0058,M_019,2023-01-26 00:00:00,Preventive,Lubrication,Routine check,2,430.86,All systems normal.
+MAINT_0059,M_020,2023-02-08 00:00:00,Preventive,Filter,Routine check,3,286.71,All systems normal.
+MAINT_0060,M_021,2023-01-31 00:00:00,Preventive,Lubrication,Routine check,3,343.9,All systems normal.
+MAINT_0061,M_021,2023-01-06 00:00:00,Preventive,Filter,Routine check,3,233.86,All systems normal.
+MAINT_0062,M_021,2023-02-09 00:00:00,Preventive,Lubrication,Routine check,1,318.21,All systems normal.
+MAINT_0063,M_022,2023-02-08 00:00:00,Preventive,Filter,Routine check,3,358.43,All systems normal.
+MAINT_0064,M_022,2023-01-20 00:00:00,Preventive,Lubrication,Routine check,1,115.43,All systems normal.
+MAINT_0065,M_022,2023-02-07 00:00:00,Preventive,Lubrication,Routine check,1,166.36,All systems normal.
+MAINT_0066,M_023,2023-01-30 00:00:00,Preventive,Sensor Calibration,Routine check,2,360.46,All systems normal.
+MAINT_0067,M_023,2023-02-01 00:00:00,Preventive,Filter,Routine check,2,232.73,All systems normal.
+MAINT_0068,M_024,2023-02-09 00:00:00,Preventive,Sensor Calibration,Routine check,1,319.81,All systems normal.
+MAINT_0069,M_024,2023-01-19 00:00:00,Preventive,Sensor Calibration,Routine check,1,182.6,All systems normal.
+MAINT_0070,M_025,2023-01-18 00:00:00,Preventive,Lubrication,Routine check,2,355.96,All systems normal.

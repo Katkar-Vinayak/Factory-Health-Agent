@@ -6,3 +6,5 @@ scikit-learn
 pydantic
 python-dotenv
 langgraph
+bcrypt
+pyjwt

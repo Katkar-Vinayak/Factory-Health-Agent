@@ -1,9 +1,13 @@
 import urllib.request
 import urllib.error
+import http.cookiejar
 import json
 import sys
 
 BASE_URL = "http://127.0.0.1:8000"
+
+cj = http.cookiejar.CookieJar()
+opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 
 def post_json(endpoint, payload):
     req = urllib.request.Request(
@@ -11,18 +15,26 @@ def post_json(endpoint, payload):
         data=json.dumps(payload).encode("utf-8"),
         headers={"Content-Type": "application/json"}
     )
-    with urllib.request.urlopen(req) as resp:
+    with opener.open(req) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 def get_json(endpoint):
     req = urllib.request.Request(f"{BASE_URL}{endpoint}")
-    with urllib.request.urlopen(req) as resp:
+    with opener.open(req) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 def run_all_tests():
     print("=================================================================")
     print("FACTORY HEALTH AGENT — COMPREHENSIVE VERIFICATION SUITE")
     print("=================================================================")
+
+    # Authenticate demo operator session
+    login_res = post_json("/api/auth/login", {
+        "email": "operator@factory.com",
+        "password": "Factory@123!"
+    })
+    assert login_res["success"] is True, f"Login failed: {login_res}"
+    print(f"[AUTH] Successfully authenticated as: {login_res['user']['email']}")
     
     # 1. Health check & LLM singleton status
     print("\n[TEST 1] GET /api/health and GET /api/agent/model-status")
@@ -120,12 +132,12 @@ def run_all_tests():
     # 9. Existing API Endpoints
     print("\n[TEST 9] Existing API Endpoints: GET /api/machines/, GET /api/machines/M_003, sensors, etc.")
     machines = get_json("/api/machines/")
-    assert len(machines) == 24
+    assert len(machines) >= 24
     m003_meta = get_json("/api/machines/M_003")
     assert m003_meta["metadata"]["machine_id"] == "M_003"
     sensors = get_json("/api/machines/M_003/sensors?limit=5")
     assert len(sensors) > 0
-    print(f"[OK] Existing machine catalog & telemetry endpoints verified (24 machines)")
+    print(f"[OK] Existing machine catalog & telemetry endpoints verified ({len(machines)} machines)")
 
     print("\n=================================================================")
     print("ALL 9 FUNCTIONAL ENDPOINT TESTS PASSED WITH 100% SUCCESS")

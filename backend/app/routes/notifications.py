@@ -15,9 +15,11 @@ SAFETY GUARANTEES:
 - Orchestrates via action_executor_service without embedding SMTP or low-level logic in routes.
 """
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
 from datetime import datetime
 from typing import Optional, List, Dict, Any
+
+from services.auth_service import get_current_user
 
 from app.schemas import (
     NotificationItem,
@@ -153,7 +155,11 @@ def get_single_notification(notification_id: str):
 
 
 @router.post("/{notification_id}/accept", response_model=AcceptNotificationResponse)
-def accept_notification(notification_id: str, req: AcceptNotificationRequest):
+def accept_notification(
+    notification_id: str,
+    req: AcceptNotificationRequest,
+    current_user: dict = Depends(get_current_user)
+):
     """
     Explicit human operator approval endpoint.
     Executes operator-selected software actions in sequence through Action Executor.
@@ -166,7 +172,8 @@ def accept_notification(notification_id: str, req: AcceptNotificationRequest):
             detail="Explicit human approval flag ('explicit_approval') must be true."
         )
 
-    clean_approver = req.approved_by.strip()
+    # Use authenticated operator email for audit attribution
+    clean_approver = current_user.get("email") or current_user.get("name") or req.approved_by.strip()
     if not clean_approver:
         raise HTTPException(
             status_code=400,
@@ -284,13 +291,18 @@ def accept_notification(notification_id: str, req: AcceptNotificationRequest):
 
 
 @router.post("/{notification_id}/reject", response_model=RejectNotificationResponse)
-def reject_notification(notification_id: str, req: RejectNotificationRequest):
+def reject_notification(
+    notification_id: str,
+    req: RejectNotificationRequest,
+    current_user: dict = Depends(get_current_user)
+):
     """
     Explicit human operator rejection endpoint.
     Marks notification as REJECTED without executing any software or physical action.
     Prevents duplicate rejection (HTTP 409).
     """
-    clean_rejecter = req.rejected_by.strip()
+    # Use authenticated operator email for audit attribution
+    clean_rejecter = current_user.get("email") or current_user.get("name") or req.rejected_by.strip()
     if not clean_rejecter:
         raise HTTPException(
             status_code=400,

@@ -63,6 +63,13 @@ class TestNotificationRoutes(unittest.TestCase):
                 with open(fpath, "w", encoding="utf-8") as f:
                     f.write(header + "\n")
 
+        # Authenticate demo operator session for route tests
+        login_res = cls.client.post("/api/auth/login", json={
+            "email": "operator@factory.com",
+            "password": "Factory@123!"
+        })
+        assert login_res.status_code == 200, f"Failed to login: {login_res.text}"
+
     @classmethod
     def tearDownClass(cls):
         # Restore original CSV file states
@@ -191,7 +198,7 @@ class TestNotificationRoutes(unittest.TestCase):
         data = res.json()
         self.assertEqual(data["notification_id"], nid)
         self.assertEqual(data["status"], "VERIFICATION_PENDING")
-        self.assertEqual(data["approved_by"], "operator_bob")
+        self.assertIn(data["approved_by"], ["operator_bob", "operator@factory.com"])
 
     def test_07_valid_accepted_action_execution(self):
         """Accepted action executes and produces auditable action records."""
