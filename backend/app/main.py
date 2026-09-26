@@ -28,8 +28,13 @@ default_origins = [
 ]
 
 cors_env = os.environ.get("CORS_ORIGINS", "").strip()
+
 if cors_env:
-    origins = [origin.strip() for origin in cors_env.split(",") if origin.strip()]
+    origins = [
+        origin.strip()
+        for origin in cors_env.split(",")
+        if origin.strip()
+    ]
     if not origins:
         origins = default_origins
 else:
