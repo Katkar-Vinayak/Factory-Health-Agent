@@ -6,9 +6,10 @@ Utilizes HTTP-only cookies to securely persist signed JWT sessions without
 exposing tokens to client-side scripts.
 """
 
+import os
 from typing import Optional
 from pydantic import BaseModel, EmailStr
-from fastapi import APIRouter, Response, HTTPException, status, Depends
+from fastapi import APIRouter, Response, Request, HTTPException, status, Depends
 from services.auth_service import (
     authenticate_user,
     create_access_token,
@@ -50,7 +51,7 @@ class LogoutResponse(BaseModel):
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login(credentials: LoginRequest, response: Response):
+async def login(credentials: LoginRequest, response: Response, request: Request):
     """
     Authenticates operator with email and password.
     Sets signed JWT in secure HTTP-only cookie.
@@ -70,6 +71,14 @@ async def login(credentials: LoginRequest, response: Response):
 
     token = create_access_token(user, remember_me=bool(credentials.remember_me))
 
+    # Determine cookie secure flag: enable on HTTPS/production while preserving localhost HTTP development
+    is_secure = (
+        request.url.scheme == "https"
+        or request.headers.get("x-forwarded-proto") == "https"
+        or os.environ.get("COOKIE_SECURE", "").lower() in ("true", "1")
+        or os.environ.get("ENVIRONMENT", "").lower() == "production"
+    )
+
     # Set secure HTTP-only cookie
     response.set_cookie(
         key=COOKIE_NAME,
@@ -79,7 +88,7 @@ async def login(credentials: LoginRequest, response: Response):
         path="/",
         httponly=True,
         samesite="lax",
-        secure=False  # allow localhost development
+        secure=is_secure
     )
 
     return LoginResponse(
@@ -111,15 +120,22 @@ async def get_me(current_user: dict = Depends(get_current_user)):
 
 
 @router.post("/logout", response_model=LogoutResponse)
-async def logout(response: Response):
+async def logout(response: Response, request: Request):
     """
     Terminates operator session by clearing the HTTP-only cookie.
     """
+    is_secure = (
+        request.url.scheme == "https"
+        or request.headers.get("x-forwarded-proto") == "https"
+        or os.environ.get("COOKIE_SECURE", "").lower() in ("true", "1")
+        or os.environ.get("ENVIRONMENT", "").lower() == "production"
+    )
     response.delete_cookie(
         key=COOKIE_NAME,
         path="/",
         httponly=True,
-        samesite="lax"
+        samesite="lax",
+        secure=is_secure
     )
     return LogoutResponse(
         success=True,

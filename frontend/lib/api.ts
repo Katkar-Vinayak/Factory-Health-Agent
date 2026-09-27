@@ -15,26 +15,23 @@ import {
 } from "../types";
 
 export function getApiBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    if (typeof window !== "undefined") {
-      const currentHost = window.location.hostname;
-      if (currentHost === "localhost") {
-        return "http://localhost:8000";
-      }
-      if (currentHost === "127.0.0.1") {
-        return "http://127.0.0.1:8000";
-      }
-    }
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
+  // In the browser, always use same-origin relative URLs ("")
+  // so requests route through the Next.js same-origin API proxy (/api/...).
+  // This guarantees authentication cookies are scoped to the frontend origin.
   if (typeof window !== "undefined") {
-    return `http://${window.location.hostname}:8000`;
+    return "";
   }
-  return "http://localhost:8000";
+  // Server-side (SSR / build time): resolve destination using BACKEND_API_URL or NEXT_PUBLIC_API_URL
+  const backendUrl =
+    process.env.BACKEND_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:8000";
+  return backendUrl.replace(/\/+$/, "");
 }
 
 async function fetchJSON<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const url = `${getApiBaseUrl()}${endpoint}`;
+  const base = getApiBaseUrl();
+  const url = base ? `${base}${endpoint}` : endpoint;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
 
@@ -77,10 +74,10 @@ async function fetchJSON<T>(endpoint: string, options?: RequestInit): Promise<T>
     clearTimeout(timeoutId);
     if (err instanceof Error) {
       if (err.name === "AbortError") {
-        throw new Error(`Request to backend server timed out after 15 seconds. Ensure FastAPI is running on port 8000.`);
+        throw new Error(`Request to backend server timed out after 15 seconds. Ensure backend service is running.`);
       }
       if (err.message.includes("Failed to fetch") || err.message.includes("NetworkError")) {
-        throw new Error(`Unable to connect to backend server at ${getApiBaseUrl() || "port 8000"}. Ensure FastAPI is running on port 8000.`);
+        throw new Error(`Unable to connect to backend server. Ensure backend service is running.`);
       }
       throw err;
     }

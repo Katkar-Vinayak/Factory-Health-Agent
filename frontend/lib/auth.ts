@@ -34,22 +34,18 @@ export interface AuthStatus {
 }
 
 export function getApiBaseUrl(): string {
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    if (typeof window !== "undefined") {
-      const currentHost = window.location.hostname;
-      if (currentHost === "localhost") {
-        return "http://localhost:8000";
-      }
-      if (currentHost === "127.0.0.1") {
-        return "http://127.0.0.1:8000";
-      }
-    }
-    return process.env.NEXT_PUBLIC_API_URL;
-  }
+  // In the browser, always use same-origin relative URLs ("")
+  // so requests route through the Next.js same-origin API proxy (/api/...).
+  // This guarantees authentication cookies are scoped to the frontend origin.
   if (typeof window !== "undefined") {
-    return `http://${window.location.hostname}:8000`;
+    return "";
   }
-  return "http://localhost:8000";
+  // Server-side (SSR / build time): resolve destination using BACKEND_API_URL or NEXT_PUBLIC_API_URL
+  const backendUrl =
+    process.env.BACKEND_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:8000";
+  return backendUrl.replace(/\/+$/, "");
 }
 
 class AuthService {
@@ -98,7 +94,9 @@ class AuthService {
     }
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
+      const base = getApiBaseUrl();
+      const url = base ? `${base}/api/auth/login` : "/api/auth/login";
+      const res = await fetch(url, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -146,7 +144,9 @@ class AuthService {
    */
   public async logout(): Promise<void> {
     try {
-      await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
+      const base = getApiBaseUrl();
+      const url = base ? `${base}/api/auth/logout` : "/api/auth/logout";
+      await fetch(url, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -166,7 +166,11 @@ class AuthService {
    */
   public async getCurrentUser(): Promise<User | null> {
     try {
-      const res = await fetch(`${getApiBaseUrl()}/api/auth/me?_t=${Date.now()}`, {
+      const base = getApiBaseUrl();
+      const url = base
+        ? `${base}/api/auth/me?_t=${Date.now()}`
+        : `/api/auth/me?_t=${Date.now()}`;
+      const res = await fetch(url, {
         method: "GET",
         credentials: "include",
         headers: {

@@ -6,8 +6,16 @@ function isTokenValid(token?: string): boolean {
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return false;
-    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const jsonStr = Buffer.from(base64, "base64").toString("utf-8");
+    let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4 !== 0) {
+      base64 += "=";
+    }
+    let jsonStr: string;
+    if (typeof Buffer !== "undefined") {
+      jsonStr = Buffer.from(base64, "base64").toString("utf-8");
+    } else {
+      jsonStr = atob(base64);
+    }
     const payload = JSON.parse(jsonStr);
     if (payload.exp && payload.exp * 1000 <= Date.now()) {
       return false;
